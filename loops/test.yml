@@ -1,0 +1,102 @@
+---
+- name: Ansible Debug Loop Examples
+  hosts: localhost
+  vars:
+    users:
+      - name: john
+        role: admin
+        groups: ['developers', 'ops']
+      - name: jane
+        role: user
+        groups: ['developers']
+    fruits:
+      - apple
+      - banana
+      - orange
+    server_configs:
+      web:
+        port: 80
+        path: /var/www
+      db:
+        port: 5432
+        path: /var/lib/postgresql
+
+  tasks:
+    # Simple list loop
+    - name: Basic loop example
+      debug:
+        msg: "Current fruit is: {{ item }}"
+      loop: "{{ fruits }}"
+
+    # Loop with complex dictionary
+    - name: Loop through user dictionary
+      debug:
+        msg: "User {{ item.name }} has role {{ item.role }} and is in groups {{ item.groups }}"
+      loop: "{{ users }}"
+
+    # Using loop_control to rename the item variable
+    - name: Loop with custom loop variable
+      debug:
+        msg: "Working with user {{ current_user.name }}"
+      loop: "{{ users }}"
+      loop_control:
+        loop_var: current_user
+
+    # Loop with index
+    - name: Indexed loop
+      debug:
+        msg: "Item {{ index }} is {{ item }}"
+      loop: "{{ fruits }}"
+      loop_control:
+        index_var: index
+
+    # Nested loop using with_nested
+    - name: Nested loop example
+      debug:
+        msg: "User {{ item[0] }} can eat {{ item[1] }}"
+      with_nested:
+        - "{{ users | map(attribute='name') | list }}"
+        - "{{ fruits }}"
+
+    # Dictionary loop using dict2items
+    - name: Loop through dictionary
+      debug:
+        msg: "Service {{ item.key }} has port {{ item.value.port }} and path {{ item.value.path }}"
+      loop: "{{ server_configs | dict2items }}"
+
+    # Filtered loop
+    - name: Show only admin users
+      debug:
+        msg: "Admin user found: {{ item.name }}"
+      loop: "{{ users }}"
+      when: item.role == 'admin'
+
+    # Loop with register
+    - name: Loop and register results
+      debug:
+        msg: "Processing {{ item }}"
+      loop: "{{ fruits }}"
+      register: fruit_results
+
+    - name: Show registered results
+      debug:
+        msg: "Results were: {{ fruit_results.results }}"
+
+    # Loop with sequence
+    - name: Generate sequence
+      debug:
+        msg: "Number {{ item }}"
+      loop: "{{ range(1, 4) | list }}"
+
+    # Loop with query
+    - name: Loop with filtering
+      debug:
+        msg: "Found group member: {{ item.name }}"
+      loop: "{{ users }}"
+      when: "'developers' in item.groups"
+
+    # Loop with length filter
+    - name: Show lengths
+      debug:
+        msg: "User {{ item.name }} is in {{ item.groups | length }} groups"
+      loop: "{{ users }}"
