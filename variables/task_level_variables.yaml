@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  gather_facts: yes
+  tasks:
+   - name: Install package
+     debug:
+        var: package_name
+     vars:
+      package_name: nginx

@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: yes
+  remote_user: "{{ ansible_user }}"
+  tasks:
+  - name: show ansible_user
+    debug:
+      var: ansible_user
+  - name: hello_world
+    debug:
+      msg: "Hello world"

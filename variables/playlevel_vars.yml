@@ -1,0 +1,11 @@
+---
+- name: Web server setup
+  hosts: localhost
+  vars:
+    package_name: "playlevel"
+  tasks:
+    - name: Install package
+      debug:
+        var: package_name
+      vars:
+        package_name: "tasklevel"
