@@ -1,0 +1,23 @@
+---
+# Example 1: Basic Handlers
+- name: Basic Handler Examples
+  hosts: localhost
+  handlers:
+    - name: Restart Apache
+      debug:
+        msg: "Apache would be restarted"
+        
+    - name: Reload Apache
+      debug:
+        msg: "Apache would be reloaded"
+        
+    - name: Send notification
+      debug:
+        msg: "Notification would be sent"
+  
+  tasks:
+    - name: Configuration change
+      command: ls
+      notify: 
+        - Restart Apache
+        - Send notification
