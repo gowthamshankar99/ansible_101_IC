@@ -1,0 +1,150 @@
+---
+- name: Ansible Blocks Examples
+  hosts: localhost
+  vars:
+    env: production
+    error_threshold: 3
+    app_path: /var/www/app
+    
+  tasks:
+    # Basic block structure
+    - name: Basic block example
+      block:
+        - name: First task in block
+          debug:
+            msg: "This is the first task"
+            
+        - name: Second task in block
+          debug:
+            msg: "This is the second task"
+      when: env == "production"  # Condition applies to entire block
+    
+    # Block with error handling
+    - name: Block with error handling
+      block:
+        - name: Try to read file
+          debug:
+            msg: "Attempting to read file"
+            
+        - name: Simulate failure
+          command: /bin/false
+          
+        - name: This task won't run due to failure
+          debug:
+            msg: "You won't see this"
+            
+      rescue:
+        - name: First rescue task
+          debug:
+            msg: "First rescue task - handling the error"
+            
+        - name: Second rescue task
+          debug:
+            msg: "Second rescue task - additional error handling"
+            
+      always:
+        - name: Cleanup task
+          debug:
+            msg: "This always runs - like a finally block"
+            
+    # Nested blocks
+    - name: Nested blocks example
+      block:
+        - name: Outer block task
+          debug:
+            msg: "Outer block"
+            
+        - name: Nested block
+          block:
+            - name: Inner task 1
+              debug:
+                msg: "Inner block task 1"
+                
+            - name: Inner task 2
+              debug:
+                msg: "Inner block task 2"
+          when: error_threshold > 2
+          
+      when: env == "production"
+      
+    # Block with become (privilege escalation)
+    - name: Block with privilege escalation
+      block:
+        - name: Task requiring sudo
+          debug:
+            msg: "This would run as sudo"
+            
+        - name: Another privileged task
+          debug:
+            msg: "Also running as sudo"
+      become: yes
+      become_user: root
+      
+    # Block with error handling and variables
+    - name: Complex error handling
+      block:
+        - name: Set fact in block
+          set_fact:
+            status: "running"
+            
+        - name: Simulate application check
+          command: /bin/false
+          register: app_status
+          
+      rescue:
+        - name: Handle different error types
+          debug:
+            msg: "Handling error code: {{ ansible_failed_result.rc }}"
+          when: ansible_failed_result is defined
+          
+        - name: Update status on failure
+          set_fact:
+            status: "failed"
+            
+      always:
+        - name: Log final status
+          debug:
+            msg: "Final status: {{ status }}"
+            
+    # Block with custom error handling
+    - name: Block with custom error handling
+      block:
+        - name: Task that might fail
+          debug:
+            msg: "Attempting risky operation"
+            
+        - name: Simulate failure with custom exit code
+          command: /bin/false
+          register: operation_result
+          ignore_errors: yes
+          
+      rescue:
+        - name: Custom error handling
+          debug:
+            msg: "Error handling based on condition"
+          when: operation_result.rc == 1
+          
+        - name: Different handling for other errors
+          debug:
+            msg: "Handling other error types"
+          when: operation_result.rc != 1
+          
+      always:
+        - name: Cleanup regardless of outcome
+          debug:
+            msg: "Performing cleanup"
+
+    # Block with multiple conditions
+    - name: Block with multiple conditions
+      block:
+        - name: Conditional task 1
+          debug:
+            msg: "Task 1 in conditional block"
+            
+        - name: Conditional task 2
+          debug:
+            msg: "Task 2 in conditional block"
+      when:
+        - env == "production"
+        - error_threshold > 2
+        - app_path is defined
