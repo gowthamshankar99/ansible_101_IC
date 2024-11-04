@@ -1,0 +1,36 @@
+---
+- name: Demonstrate Idempotency with changed_when
+  hosts: localhost
+  gather_facts: false
+  
+  tasks:
+    - name: Create a directory if it doesn't exist
+      file:
+        path: /tmp/test_dir
+        state: directory
+        mode: '0755'
+
+    - name: Check if file exists and create if needed
+      shell: |
+        if [ ! -f /tmp/test_dir/example.txt ]; then
+          echo "hello world" > /tmp/test_dir/example.txt
+          echo "CREATED"
+        else
+          echo "EXISTS"
+        fi
+      register: file_check
+      changed_when: file_check.stdout == "CREATED"
+
+    - name: Append timestamp to file only if content changed
+      shell: |
+        OLD_CONTENT=$(cat /tmp/test_dir/example.txt)
+        NEW_CONTENT="Updated content - $(date)"
+        
+        if [ "$OLD_CONTENT" != "$NEW_CONTENT" ]; then
+          echo "$NEW_CONTENT" > /tmp/test_dir/example.txt
+          echo "MODIFIED"
+        else
+          echo "UNCHANGED"
+        fi
+      register: update_result
+      changed_when: update_result.stdout == "MODIFIED"

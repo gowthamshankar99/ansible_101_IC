@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: show the contents of the directory
+    command: ls
+    register: lsoutput
+
+
+  - name: show output 
+    debug:
+      var: lsoutput
