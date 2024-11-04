@@ -1,0 +1,16 @@
+---
+- name: Database configuration example
+  hosts: localhost
+  vars_files:
+    - secrets.yaml
+  
+  tasks:
+    - name: print user
+      debug:
+        var: admin_user
+
+
+    - name: print pwd
+      debug:
+        var: database_password
+      no_log: true
