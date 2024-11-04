@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  gather_facts: true
+  tasks:
+  - name: testing 
+    command: ls
+    changed_when: false
+    register: lsoutput
+
+
+  - name: show output 
+    debug:
+      var: lsoutput

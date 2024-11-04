@@ -1,0 +1,148 @@
+---
+- name: Ansible Conditions Examples
+  hosts: localhost
+  vars:
+    env: "production"
+    os_family: "Debian"
+    memory_mb: 2048
+    is_active: true
+    users:
+      - name: john
+        role: admin
+        active: true
+      - name: jane
+        role: user
+        active: false
+    installed_services:
+      - nginx
+      - postgresql
+    min_memory: 1024
+    config:
+      max_connections: 100
+      enable_feature: true
+
+  tasks:
+    # Basic conditions
+    - name: Basic when condition
+      debug:
+        msg: "This is production environment"
+      when: env == "production"
+
+    # Multiple conditions (AND)
+    - name: Multiple conditions with and
+      debug:
+        msg: "This is production AND has enough memory"
+      when:
+        - env == "production"
+        - memory_mb >= min_memory
+
+    # Multiple conditions (OR)
+    - name: Multiple conditions with or
+      debug:
+        msg: "Either production or high memory"
+      when: env == "production" or memory_mb > 4096
+
+    # Checking boolean values
+    - name: Check boolean
+      debug:
+        msg: "Service is active"
+      when: is_active | bool
+
+    # Checking strings
+    - name: String comparison
+      debug:
+        msg: "OS is Debian-based"
+      when: os_family is match("Debian")
+
+    # Checking lists
+    - name: Check if service exists
+      debug:
+        msg: "Nginx is installed"
+      when: '"nginx" in installed_services'
+
+    # Checking dictionaries
+    - name: Check dictionary value
+      debug:
+        msg: "High connection limit configured"
+      when: config.max_connections >= 100
+
+    # Using register
+    - name: Get file status
+      stat:
+        path: /etc/hosts
+      register: file_status
+
+    - name: Use registered variable
+      debug:
+        msg: "The file exists"
+      when: file_status.stat.exists
+
+    # Using facts
+    - name: Check system memory
+      debug:
+        msg: "System has more than 2GB RAM"
+      when: ansible_memtotal_mb is defined and ansible_memtotal_mb > 2048
+
+    # Complex nested conditions
+    - name: Complex nested condition
+      debug:
+        msg: "Complex condition met"
+      when: >
+        (env == "production" and memory_mb > 1024) or
+        (env == "development" and is_active)
+
+    # Loop with conditions
+    - name: Loop with condition
+      debug:
+        msg: "Active user: {{ item.name }}"
+      loop: "{{ users }}"
+      when: item.active | bool
+
+    # Conditional import
+    - name: Include task based on condition
+      debug:
+        msg: "Would import production tasks"
+      when: env == "production"
+
+    # Testing multiple values
+    - name: Check multiple values
+      debug:
+        msg: "Environment is {{ env }}"
+      when: env in ["production", "staging", "development"]
+
+    # Using defined/undefined
+    - name: Check if variable is defined
+      debug:
+        msg: "Config exists"
+      when: config is defined
+
+    # Using file exists
+    - name: Check if file exists
+      debug:
+        msg: "File exists"
+      when: lookup('file', '/etc/hosts', errors='ignore') is defined
+
+    # Version comparison
+    - name: Version check
+      debug:
+        msg: "Version is compatible"
+      vars:
+        current_version: "2.9.0"
+      when: current_version is version('2.8.0', '>')
+
+    # Failed status
+    - name: Try command
+      command: /bin/false
+      register: command_result
+      ignore_errors: yes
+
+    - name: Check failed status
+      debug:
+        msg: "Previous command failed"
+      when: command_result is failed
+
+    # Success status
+    - name: Check success status
+      debug:
+        msg: "Previous command succeeded"
+      when: command_result is succeeded
