@@ -1,0 +1,88 @@
+---
+# Example showing different tag scenarios
+- name: Tag Examples Playbook
+  hosts: localhost
+  vars:
+    app_version: "1.2.3"
+    env: "production"    
+  tasks:
+    # Basic tags
+    - name: Install packages
+      debug:
+        msg: "Installing required packages"
+      tags:
+        - setup
+        - packages
+        - install
+        
+    - name: Configure application
+      debug:
+        msg: "Configuring application settings"
+      tags: 
+        - config
+        - setup
+        
+    # Single tag
+    - name: Database backup
+      debug:
+        msg: "Backing up database"
+      tags: backup
+        
+    # Multiple tags in list format
+    - name: Deploy application
+      debug:
+        msg: "Deploying version {{ app_version }}"
+      tags:
+        - deploy
+        - publish
+        - update
+        
+    # Special tag 'never'
+    - name: Dangerous cleanup
+      debug:
+        msg: "Cleaning up old data"
+      tags:
+        - never
+        - cleanup
+        
+    # Special tag 'always'
+    - name: Security check
+      debug:
+        msg: "Performing security scan"
+      tags:
+        - always
+        - security
+        
+    # Block level tags
+    - name: Configuration block
+      block:
+        - name: Update config file
+          debug:
+            msg: "Updating configuration"
+            
+        - name: Verify config
+          debug:
+            msg: "Verifying configuration"
+      tags:
+        - config
+        - setup
+        
+    # Conditional tags
+    - name: Production only task
+      debug:
+        msg: "Running in production"
+      tags:
+        - production
+      when: env == "production"
+        
+    # Multiple tasks with shared tags
+    - name: Start services
+      debug:
+        msg: "Starting service 1"
+      tags: services
+        
+    - name: Start another service
+      debug:
+        msg: "Starting service 2"
+      tags: services
+        
