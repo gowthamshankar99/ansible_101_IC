@@ -84,7 +84,6 @@
 - [ ] Connection plugins
 - [ ] Test strategies
 - [ ] Debugger
-- [ ] Strategy plugins
 
 ## 10. Best Practices
 - [ ] Role dependencies
@@ -110,8 +109,6 @@
 - [ ] Environment variables
 - [ ] Host patterns
 - [ ] Parallelism control
-- [ ] SSH management
-- [ ] Python interpreter management
 
 ## 13. Troubleshooting Tools
 - [ ] Verbose mode (-v to -vvvv)
@@ -122,20 +119,5 @@
 - [ ] Module debugging
 - [ ] Log management
 
-## 14. Performance Optimization
-- [ ] Fact gathering control
-- [ ] SSH multiplexing
-- [ ] Pipelining
-- [ ] Mitogen strategy
-- [ ] Cache plugins
-- [ ] Optimization strategies
-- [ ] Concurrent execution
 
-## 15. Infrastructure as Code Concepts
-- [ ] Idempotency
-- [ ] Declarative vs Imperative
-- [ ] State management
-- [ ] Configuration drift
-- [ ] Infrastructure testing
-- [ ] Compliance management
-- [ ] Change management
+
