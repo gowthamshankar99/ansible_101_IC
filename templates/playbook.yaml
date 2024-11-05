@@ -1,0 +1,23 @@
+# playbook.yml
+---
+- name: Deploy application configuration
+  hosts: localhost
+  vars:
+    db_host: db.example.com
+    db_name: myapp
+    db_user: app_user
+    debug_mode: false
+    log_level: WARNING
+    allowed_ips:
+      - 192.168.1.100
+      - 192.168.1.101
+      - 192.168.1.102
+  
+  tasks:
+    - name: Generate application configuration
+      template:
+        src: app_config.ini.j2
+        dest: /home/ec2-user/ansible_101/templates/app_config.ini
+        #owner: myapp #myapp owner should exist
+        #group: myapp #myapp group should exist
+        mode: '0600'
