@@ -267,6 +267,20 @@ if __name__ == "__main__":
     print(json.dumps(inventory, indent=2))
 ```
 
+```
+# Method 1: Using -i flag directly with the script
+ansible-playbook playbook.yml -i ./dynamic_inventory.py
+
+# Method 2: Test inventory listing
+ansible-inventory -i ./dynamic_inventory.py --list
+
+# Method 3: Test connectivity to all hosts
+ansible all -i ./dynamic_inventory.py -m ping
+
+# Method 4: Target specific groups
+ansible-playbook playbook.yml -i ./dynamic_inventory.py --limit webservers
+```
+
 ## 6. Best Practices for Inventory Organization
 
 ### Directory Structure
