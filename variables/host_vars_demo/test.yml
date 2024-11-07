@@ -1,5 +1,5 @@
 ---
-- hosts: webservers
+- hosts: 10.0.51.50
   gather_facts: yes
   tasks:
     - name: print groupvars
